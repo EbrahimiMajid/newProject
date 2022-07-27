@@ -6,8 +6,8 @@ import service.PostService;
 import service.UserService;
 import utils.ApplicationContext;
 import utils.input.Input;
-import java.util.List;
-import java.util.Objects;
+
+import java.util.*;
 
 public class ProfileMenu extends Menu{
     private final User user;
@@ -18,7 +18,7 @@ public class ProfileMenu extends Menu{
     public ProfileMenu(User user) {
         super(new String[]{"Edit Profile","Delete Account","Post","Comment",
                 "like","Show Post Of All Users","Explore","Chat",
-                "Show Followers","Show Followings","Log out"});
+                "Show Followers","Show Followings","User suggestion","Log out"});
         this.user = user;
         System.out.println("Welcome to your work bench... \n"
                 +user.getUserProfile().getFirstName() +"  "
@@ -62,8 +62,45 @@ public class ProfileMenu extends Menu{
                     showFollowings(user);
                     break;
                 case 11:
+                    userSuggestion(user);
+                    break;
+                case 12:
                     return;
             }
+        }
+    }
+
+    public void userSuggestion(User user){
+        List<User> friend = userService.getUserForShowPosts(user);
+        List<User> fFriend = new ArrayList<>();
+        for (User user1 : friend) {
+            for (User user2 : userService.getUserForShowPosts(user1)) {
+                if(!friend.contains(user2)&&!fFriend.contains(user2))
+                    fFriend.add(user2);
+            }
+        }
+        List<Integer> finish = new ArrayList<>();
+        int number;
+        for (int i = 0; i < fFriend.size(); i++) {
+            number=0;
+            for (User user1 : userService.getUserForShowPosts(fFriend.get(i))) {
+                if(friend.contains(user1))
+                    number+=1;
+            }
+            finish.add(number);
+        }
+        List<User> Final = new ArrayList<>();
+        for(int i=0; i< finish.size() ; i++){
+            int k = Collections.max(finish);
+            int j = finish.indexOf(k);
+            Final.add(fFriend.get(j));
+            finish.set(k,-1);
+        }
+        for (int i = 0; i < Final.size(); i++) {
+            System.out.print(i+1 +". ");
+            System.out.println(Final.get(i).getUserProfile().getFirstName()
+                    +"  "+Final.get(i).getUserProfile().getLastName());
+            System.out.println("  id : "+Final.get(i).getId());
         }
     }
 
