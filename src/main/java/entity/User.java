@@ -57,8 +57,10 @@ public class User extends BaseEntity<Long> {
    )
    private List<User> followings = new ArrayList<>();
 
+   @OneToMany(mappedBy = "user")
+   private List<Visit> Visits;
 
-   //----------------------------------
+
 
    @Override
    public String toString() {

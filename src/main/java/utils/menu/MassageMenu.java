@@ -97,7 +97,6 @@ public class MassageMenu extends Menu{
             }
             System.out.println("Enter massage :");
             String text = Input.scanner.nextLine();
-            System.out.println(text.length());
             chatService.addMassage(chat,user,text,replyText);
         }
     }

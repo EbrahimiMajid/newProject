@@ -252,9 +252,9 @@ public class ChatServiceImpl extends BaseEntityServiceImpl<Chat, Long, ChatRepos
         Long Id = chat1.getMassages().get(id-1).getId();
         chat1.getMassages().remove(chat1.getMassages().get(id-1));
         transaction.begin();
-        entityManager.createQuery(
-                "DELETE FROM Massage m WHERE m.id=: g "
-        ).setParameter("g",Id).executeUpdate();
+            entityManager.createQuery(
+                    "DELETE FROM Massage m WHERE m.id=: g "
+            ).setParameter("g",Id).executeUpdate();
         transaction.commit();
     }
 }

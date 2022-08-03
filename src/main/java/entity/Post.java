@@ -37,9 +37,26 @@ public class Post extends BaseEntity<Long> {
     @OneToMany(mappedBy = "post" , cascade = CascadeType.ALL)
     private List<Comment> comments = new ArrayList<>();
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany
     @JoinTable(name = "post_like")
     private List<User> likes = new ArrayList<>();
+
+    //---------------------------
+    @ManyToMany
+    @JoinTable(name = "user_dislikes")
+    private List<User> disLikes = new ArrayList<>();
+
+    @ManyToMany
+    @JoinTable(name = "user_noreaction")
+    private List<User> noReaction = new ArrayList<>();
+
+    @ManyToMany
+    @JoinTable(name = "user_likes")
+    private List<User> Likes = new ArrayList<>();
+    //-----------------------------
+
+    @OneToMany(mappedBy = "post")
+    private List<Visit> Visits;
 
 
 }

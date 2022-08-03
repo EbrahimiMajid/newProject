@@ -10,6 +10,7 @@ import utils.input.Input;
 
 import javax.persistence.EntityTransaction;
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class PostServiceImpl extends BaseEntityServiceImpl<Post, Long, PostRepository>
         implements PostService {
@@ -57,6 +58,42 @@ public class PostServiceImpl extends BaseEntityServiceImpl<Post, Long, PostRepos
     @Override
     public void deleteById(Long Id) {
         repository.deleteById(Id);
+    }
+
+    @Override
+    public void showVisits(Post post,String time) {
+
+    }
+
+    @Override
+    public List<Post> businessPosts() {
+        return null;
+    }
+
+    @Override
+    public void saveLikeAndDislikeInBusinessPost(Post post,User user, Boolean check) {
+        if(check==null){
+            if(!post.getNoReaction().contains(user)){
+                post.getNoReaction().add(user);
+                if(!post.getDisLikes().contains(user))
+                    post.getDisLikes().remove(user);
+            }
+        }
+        else if(check){
+            post.getLikes().add(user);
+            System.out.println("You liked this ad!");
+        }
+        else{
+            if(!post.getDisLikes().contains(user)){
+                post.getDisLikes().add(user);
+                System.out.println("You disliked this ad!");
+                if(!post.getNoReaction().contains(user))
+                    post.getNoReaction().remove(user);
+            }
+        }
+        transaction.begin();
+        repository.save(post);
+        transaction.commit();
     }
 
 

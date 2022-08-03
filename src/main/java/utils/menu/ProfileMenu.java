@@ -1,4 +1,5 @@
 package utils.menu;
+import entity.Post;
 import entity.User;
 import entity.dto.SearchUserDto;
 import service.CommentService;
@@ -70,6 +71,70 @@ public class ProfileMenu extends Menu{
         }
     }
 
+    public void AdvertisementOffer(User user,Post post){
+        List<Post> posts = postService.businessPosts();
+        List<Post> removes = new ArrayList<>();
+        for (int i = 0; i < posts.size(); i++) {
+            if(posts.get(i).getLikes().contains(user))
+                removes.add(posts.get(i));
+        }
+        for (int i = 0; i < removes.size(); i++) {
+            posts.remove(removes.get(i));
+        }
+        if(posts.size()==0){
+            System.out.println("no result.");
+        }
+        else{
+            ArrayList<Integer> numbers = new ArrayList<>();
+            List<User> likeUsers = post.getLikes();
+            List<User> disLikes = post.getDisLikes();
+            List<User> onReaction = post.getNoReaction();
+            int number;
+            for (int i = 0; i < posts.size(); i++) {
+                number = 0;
+
+                for (User likeUser : likeUsers) {
+                    if(posts.get(i).getLikes().contains(likeUser))
+                        number++;
+                }
+
+                for (User disLike : disLikes) {
+                    if(posts.get(i).getDisLikes().contains(disLike))
+                        number++;
+                }
+
+                for (User user1 : onReaction) {
+                    if(posts.get(i).getNoReaction().contains(user1))
+                        number++;
+                }
+
+                numbers.add(number);
+            }
+            int n = numbers.indexOf(Collections.max(numbers));
+
+            Post star = posts.get(n);
+
+            System.out.println(star.getUser().getUserProfile().getFirstName()
+                    +"  "+star.getUser().getUserProfile().getLastName()+":");
+            System.out.println(star.getText());
+            System.out.println();
+            System.out.println("1.like");
+            System.out.println("2.dislike");
+            System.out.println("3.back");
+            int check = ChatMenu.number(3).intValue();
+            if(check==1){
+                postService.saveLikeAndDislikeInBusinessPost(star,user,true);
+            }
+            else if(check==2){
+                postService.saveLikeAndDislikeInBusinessPost(star,user,false);
+            }
+            else{
+                postService.saveLikeAndDislikeInBusinessPost(star,user,null);
+            }
+
+        }
+    }
+
     public void userSuggestion(User user){
         List<User> friend = userService.getUserForShowPosts(user);
         List<User> fFriend = new ArrayList<>();
@@ -137,13 +202,29 @@ public class ProfileMenu extends Menu{
     }
 
     public void userProfile(Long id){
-        User user = userService.findById(id);
-        if(user!=null){
-            System.out.println(user.getUserProfile().getFirstName()
-                    +"  "+user.getUserProfile().getLastName()+" :");
+        User user1 = userService.findById(id);
+        if(user1!=null){
+            System.out.println(user1.getUserProfile().getFirstName()
+                    +"  "+user1.getUserProfile().getLastName()+" :");
             System.out.println("id :"+id);
-            System.out.println("followers :"+user.getFollowers().size());
+            System.out.println("followers :"+user1.getFollowers().size());
+            System.out.println();
+            if(user.getFollowers().contains(user1)){
+                System.out.println("1. unfollow");
+                System.out.println("2. back");
+                int check = ChatMenu.number(2).intValue();
+                if(check==1){
+                    userService.addFollower(user,user1);
+                }
+            }
+            else{
+                System.out.println("1. follow");
+                System.out.println("2. back");
+                int check = ChatMenu.number(2).intValue();
+                if(check==1){
+                    userService.addFollower(user,user1);
+                }
+            }
         }
-
     }
 }
