@@ -11,7 +11,7 @@ public interface ChatRepository extends BaseEntityRepository<Chat, Long> {
 
     List<Chat> Chats(List<User> users);
 
-    void showChats(User user);
+    List<Chat> showChats(User user);
 
     List<Massage> searchMassageInChat(Chat chat1,String text);
 

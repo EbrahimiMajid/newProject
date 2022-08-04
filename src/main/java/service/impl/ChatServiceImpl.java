@@ -223,8 +223,8 @@ public class ChatServiceImpl extends BaseEntityServiceImpl<Chat, Long, ChatRepos
     }
 
     @Override
-    public void showChats(User user) {
-        repository.showChats(user);
+    public List<Chat> showChats(User user) {
+        return repository.showChats(user);
     }
 
     @Override

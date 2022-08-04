@@ -34,7 +34,7 @@ public interface ChatService extends BaseEntityService<Chat, Long> {
 
     void forwardMassage(Chat chat1,User user,int id,Chat chat);
 
-    void showChats(User user);
+    List<Chat> showChats(User user);
 
     void deleteChat(Chat chat1,User user);
 }

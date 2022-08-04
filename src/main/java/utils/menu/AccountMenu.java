@@ -1,5 +1,6 @@
 package utils.menu;
 
+import Hello.ChatHandle;
 import entity.User;
 import utils.ApplicationContext;
 import utils.input.Input;
@@ -13,7 +14,7 @@ public class AccountMenu extends Menu{
     }
 
     public void runMenu() {
-        while (true) {
+        //while (true) {
             print();
             switch (chooseOperation()) {
                 case 1:
@@ -23,7 +24,8 @@ public class AccountMenu extends Menu{
                         user = ApplicationContext.getUserService().login();
                     }
                     ApplicationContext.getUserService().save(user);
-                    new ProfileMenu(user).runMenu();
+                    new ChatHandle(user);
+                    //new ProfileMenu(user).runMenu();
                     break;
                 case 2:
                     ApplicationContext.getUserService().signUp();
@@ -31,6 +33,6 @@ public class AccountMenu extends Menu{
                 case 3:
                     return;
             }
-        }
+        //}
     }
 }

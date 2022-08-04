@@ -46,7 +46,7 @@ public class ProfileMenu extends Menu{
                     new LikeMenu(user , userService , postService).runMenu();
                 case 6:
                     List<User> users = userService.showPostAllOfUsers();
-                    for (User user1 : users) {
+                    for (User user1 : users){
                         System.out.println(user1.getPosts());
                     }
                     break;

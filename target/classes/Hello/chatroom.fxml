@@ -62,7 +62,7 @@
             </children>
         </GridPane>
         <SplitPane fx:id="divider" dividerPositions="0.3" prefHeight="720.0" prefWidth="1280.0" style="-fx-background-color: #17212B;" GridPane.rowIndex="1">
-            <GridPane fx:id="mlk" style="-fx-background-color: #17212B;">
+            <GridPane fx:id="left" style="-fx-background-color: #17212B;">
                 <columnConstraints>
                     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="100.0" />
                 </columnConstraints>
@@ -97,7 +97,7 @@
             </GridPane>
 
 
-            <GridPane fx:id="mnb">
+            <GridPane fx:id="right">
                 <columnConstraints>
                     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                 </columnConstraints>
@@ -148,23 +148,23 @@
                             <Insets left="20.0" />
                         </padding>
                     </HBox>
-                    <ListView fx:id="vbox" prefHeight="200.0" prefWidth="100.0" style="-fx-background-color: #17212B" GridPane.rowIndex="1">
+                    <ListView fx:id="massageListView" prefHeight="200.0" prefWidth="100.0" style="-fx-background-color: #17212B" GridPane.rowIndex="1">
                         <stylesheets>
                             <URL value="@../resources/css/usersListViewCss.css" />
                             <URL value="@../resources/css/cellViewCss.css" />
                         </stylesheets>
                     </ListView>
-                    <HBox fx:id="hbox" alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="10.0" style="-fx-background-color: #17212B;" GridPane.rowIndex="2">
+                    <HBox fx:id="hBoxSend" alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="10.0" style="-fx-background-color: #17212B;" GridPane.rowIndex="2">
                         <children>
                             <ImageView fitHeight="30.0" fitWidth="30.0" onMouseClicked="#attachFile" pickOnBounds="true" preserveRatio="true">
                                 <image>
                                     <Image url="@../resources/img/attach.png" />
                                 </image>
                             </ImageView>
-                            <TextField fx:id="messageField"  onAction="#sendMessage" prefHeight="51.0" prefWidth="784.0"
+                            <TextField fx:id="messageField" prefHeight="51.0" prefWidth="784.0"
                                        promptText="Type a message..." style="-fx-background-color: transparent;"
                                        stylesheets="@../resources/css/textField.css" HBox.hgrow="ALWAYS" />
-                            <ImageView fx:id="send" onMouseClicked="#mouseclicked" fitHeight="34.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true" >
+                            <ImageView fx:id="send" onMouseClicked="#sendMassage" fitHeight="34.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true" >
                                 <image>
                                     <Image url="@../resources/img/Background.png" />
                                 </image>

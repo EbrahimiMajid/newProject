@@ -6,7 +6,6 @@ import entity.Massage;
 import entity.User;
 import repository.ChatRepository;
 import javax.persistence.EntityManager;
-import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -36,7 +35,7 @@ public class ChatRepositoryImpl extends BaseEntityRepositoryImpl<Chat, Long>
     }
 
     @Override
-    public void showChats(User user) {
+    public List<Chat> showChats(User user) {
 
         TypedQuery<Chat> query = entityManager.createQuery(
                 "from Chat t WHERE 5 =: k", Chat.class).setParameter("k", 5);
@@ -47,10 +46,11 @@ public class ChatRepositoryImpl extends BaseEntityRepositoryImpl<Chat, Long>
                 chats2.add(chat);
             }
         }
+        return chats2;
         //-----------------------
         //ترتیب نشان دادن چت ها
         //----------------------
-        for (int i = 0; i < chats2.size(); i++) {
+        /*for (int i = 0; i < chats2.size(); i++) {
             System.out.print(i+1 +".");
             if(chats2.get(i).getName()==null){
                 System.out.println(chats2.get(i).getUsers().get(1).getUserProfile().getFirstName()+"   "+
@@ -61,7 +61,7 @@ public class ChatRepositoryImpl extends BaseEntityRepositoryImpl<Chat, Long>
             }
 
 
-        }
+        }*/
     }
 
     @Override
