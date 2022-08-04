@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.text.Font?>
+<GridPane xmlns="http://javafx.com/javafx"
+          xmlns:fx="http://javafx.com/fxml"
+          fx:controller="Hello.MassageTextOut"
+          prefHeight="400.0" prefWidth="600.0">
+    <columnConstraints>
+        <ColumnConstraints hgrow="ALWAYS" maxWidth="582.80009765625" minWidth="10.0" prefWidth="255.60002441406255" />
+        <ColumnConstraints hgrow="SOMETIMES" maxWidth="343.9999755859375" minWidth="10.0" prefWidth="343.9999755859375" />
+    </columnConstraints>
+    <rowConstraints>
+        <RowConstraints minHeight="10.0" vgrow="SOMETIMES"  />
+    </rowConstraints>
+    <children>
+        <VBox prefHeight="354.0" prefWidth="559.0" spacing="10.0" style="-fx-background-radius: 10px; -fx-background-color: #182533;" GridPane.columnIndex="1">
+            <children>
+                <Label fx:id="messageLabel" alignment="TOP_LEFT" maxHeight="-Infinity" maxWidth="400.0" text="MessageMessage" textFill="WHITE" wrapText="true">
+                    <font>
+                        <Font name="Segoe UI" size="18.0" />
+                    </font>
+                </Label>
+
+                <Label fx:id="messageTimeLabel" alignment="BOTTOM_RIGHT" text="10:00" textAlignment="CENTER" textFill="#92a3af">
+                    <font>
+                        <Font name="Segoe UI" size="20.0" />
+                    </font>
+                    <padding>
+                        <Insets top="50.0" />
+                    </padding>
+                </Label>
+
+            </children>
+            <padding>
+                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+            </padding>
+        </VBox>
+    </children>
+</GridPane>

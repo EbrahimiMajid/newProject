@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<GridPane xmlns="http://javafx.com/javafx"
+          xmlns:fx="http://javafx.com/fxml"
+          fx:controller="Hello.CellChat"
+          prefHeight="400.0" prefWidth="600.0">
+    <columnConstraints>
+        <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" percentWidth="20.0" prefWidth="100.0" />
+        <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" percentWidth="80.0" />
+    </columnConstraints>
+    <rowConstraints>
+        <RowConstraints minHeight="10.0" vgrow="ALWAYS"/>
+    </rowConstraints>
+    <children>
+        <VBox alignment="CENTER" prefHeight="82.0" prefWidth="65.0" GridPane.columnIndex="0" GridPane.rowIndex="0" >
+            <children>
+                <ImageView fx:id="avatarImage" fitHeight="50.0" fitWidth="78.0" pickOnBounds="true" preserveRatio="true" VBox.vgrow="ALWAYS">
+                    <image>
+                        <Image url="@../resources/img/email.png" />
+                    </image>
+                </ImageView>
+            </children>
+        </VBox>
+        <HBox prefHeight="199.0" prefWidth="54.0" spacing="10.0" GridPane.columnIndex="1" GridPane.rowIndex="0">
+            <children>
+                <VBox spacing="10.0" HBox.hgrow="ALWAYS">
+                    <children>
+                        <Label fx:id="userNameLabel" text="User name" textAlignment="CENTER" textFill="WHITE">
+                            <font>
+                                <Font name="Segoe UI Bold" size="20.0" />
+                            </font>
+                            <VBox.margin>
+                                <Insets top="10.0" />
+                            </VBox.margin>
+                        </Label>
+                        <Label fx:id="lastMessageLabel" text="Last message sent by user name" textAlignment="CENTER" textFill="#92a3af">
+                            <font>
+                                <Font name="Segoe UI" size="14.0" />
+                            </font>
+                        </Label>
+                    </children>
+                </VBox>
+                <VBox alignment="TOP_CENTER" spacing="10.0">
+                    <children>
+                        <Label fx:id="messageTimeLabel" alignment="CENTER" text="10:00" textAlignment="CENTER" textFill="#92a3af">
+                            <font>
+                                <Font name="Segoe UI" size="20.0" />
+                            </font>
+                            <VBox.margin>
+                                <Insets left="5.0" right="5.0" />
+                            </VBox.margin>
+                        </Label>
+                        <StackPane fx:id="notificationPanel" visible="false">
+                            <children>
+                                <Circle fill="#4082bc" radius="18.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" />
+                                <Label fx:id="numbreMessageLabel" alignment="CENTER" text="3" textAlignment="CENTER" textFill="WHITE">
+                                    <font>
+                                        <Font name="Segoe UI Bold" size="20.0" />
+                                    </font>
+                                </Label>
+                            </children>
+                        </StackPane>
+                    </children>
+                    <HBox.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                    </HBox.margin>
+                </VBox>
+            </children>
+        </HBox>
+    </children>
+
+</GridPane>
