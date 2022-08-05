@@ -235,13 +235,15 @@ public class ChatServiceImpl extends BaseEntityServiceImpl<Chat, Long, ChatRepos
             System.out.println("This chat does not exist.");
         }
         else{
-            user.getChats().remove(chat);
-            transaction.begin();
-            if (user.getId() == null) {
-                entityManager.persist(user);
+            for (User user1 : users) {
+                user1.getChats().remove(chat);
+                transaction.begin();
+                if (user1.getId() == null) {
+                    entityManager.persist(user1);
+                }
+                entityManager.merge(user1);
+                transaction.commit();
             }
-            entityManager.merge(user);
-            transaction.commit();
             System.out.println("The chat was deleted.");
         }
     }

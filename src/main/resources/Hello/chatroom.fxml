@@ -1,21 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.image.Image?>
 <?import java.net.URL?>
-<?import javafx.scene.text.Font?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.effect.DropShadow?>
-<GridPane xmlns="http://javafx.com/javafx"
-          xmlns:fx="http://javafx.com/fxml"
-          fx:controller="Hello.SocialNetworkApplication"
-          prefHeight="400.0" prefWidth="600.0">
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<GridPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Hello.SocialNetworkApplication">
     <columnConstraints>
         <ColumnConstraints minWidth="10.0" percentWidth="100.0" />
     </columnConstraints>
@@ -81,7 +82,12 @@
                                     <Image url="@../resources/img/Liste.png" />
                                 </image>
                             </ImageView>
-                            <TextField promptText="Search" style="-fx-background-color: #242F3D;" HBox.hgrow="ALWAYS" />
+                            <ImageView fitHeight="23.0" fitWidth="31.0" onMouseClicked="#chatByFollower" pickOnBounds="true" preserveRatio="true" >
+                                <image>
+                                    <Image url="@../resources/img/plus-60.png" />
+                                </image>
+                            </ImageView>
+                            <TextField fx:id="searchBox" promptText="Search" style="-fx-background-color: #242F3D;" HBox.hgrow="ALWAYS" />
                         </children>
                         <padding>
                             <Insets left="20.0" right="20.0" />
@@ -161,16 +167,14 @@
                                     <Image url="@../resources/img/attach.png" />
                                 </image>
                             </ImageView>
-                            <TextField fx:id="messageField" prefHeight="51.0" prefWidth="784.0"
-                                       promptText="Type a message..." style="-fx-background-color: transparent;"
-                                       stylesheets="@../resources/css/textField.css" HBox.hgrow="ALWAYS" />
-                            <ImageView fx:id="send" onMouseClicked="#sendMassage" fitHeight="34.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true" >
+                            <TextField fx:id="messageField" prefHeight="51.0" prefWidth="784.0" promptText="Type a message..." style="-fx-background-color: transparent;" stylesheets="@../resources/css/textField.css" HBox.hgrow="ALWAYS" />
+                            <ImageView fx:id="send" fitHeight="34.0" fitWidth="35.0" onMouseClicked="#sendMassage" pickOnBounds="true" preserveRatio="true">
                                 <image>
                                     <Image url="@../resources/img/Background.png" />
                                 </image>
                             </ImageView>
 
-                            <ImageView  fitHeight="35.0" fitWidth="35.0" onMouseClicked="#smileyButtonClicked" pickOnBounds="true" preserveRatio="true">
+                            <ImageView fitHeight="35.0" fitWidth="35.0" onMouseClicked="#smileyButtonClicked" pickOnBounds="true" preserveRatio="true">
                                 <image>
                                     <Image url="@../resources/img/smile.png" />
                                 </image>

@@ -1,6 +1,8 @@
 package Hello;
 
 import entity.Chat;
+import entity.Massage;
+import entity.User;
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -17,6 +19,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
+import utils.input.Input;
 import utils.menu.ShowAndRunMenu;
 
 import java.io.IOException;
@@ -24,6 +27,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import static utils.menu.ChatMenu.number;
 
 public class SocialNetworkApplication extends Application{
 
@@ -40,9 +45,14 @@ public class SocialNetworkApplication extends Application{
     public ImageView send;
     public GridPane right;
 
+    public Chat chat;
     public List<Chat> chats;
     public List<CellChat> cellChats = new ArrayList<>();
+    public List<MassageTextIn> massagesTextIn = new ArrayList<>();
+    public List<MassageTextOut> massagesTextOut = new ArrayList<>();
     public HashMap<GridPane,Chat> ChatList = new HashMap<>();
+    public HashMap<GridPane,Massage> massageList = new HashMap<>();
+    public TextField searchBox;
 
     public static void main(String[] args) {
         new ShowAndRunMenu().runMenu();
@@ -62,6 +72,7 @@ public class SocialNetworkApplication extends Application{
     }
 
     public void initialize() throws IOException {
+        massageListView.setFixedCellSize(160);
         usersListView.setFixedCellSize(100);
         right.minWidthProperty().bind(divider.widthProperty().multiply(0.4));
         left.minWidthProperty().bind(divider.widthProperty().multiply(0.4));
@@ -80,10 +91,80 @@ public class SocialNetworkApplication extends Application{
             }
         });
 
+        searchBox.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observableValue, String s, String s2) {
+                if(searchBox.getText().length()==0){
+                    cellChats.clear();
+                    ChatList.clear();
+                    usersListView.getItems().clear();
+                    List<Chat> chats1 = new ArrayList<>();
+                    for (Chat chat : chats) {
+                        if(chat.getMassages().size()==0 && chat.getName()==null){
+                            chats1.add(chat);
+                        }
+                        else{
+                                try {
+                                    cellChats.add(addChatToList(chat));
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+
+
+                        }
+                    }
+                    int size = chats1.size();
+                    for(int i=0; i < size; i++){
+                        ChatHandle.chatService.deleteChat(chats1.get(i),ChatHandle.user);
+                    }
+                }
+                else{
+                    cellChats.clear();
+                    ChatList.clear();
+                    usersListView.getItems().clear();
+                    if(ChatHandle.userService.existByUsername(searchBox.getText())!=null){
+                        User user = ChatHandle.userService.existByUsername(searchBox.getText());
+                        Boolean check = true;
+                        for (Chat chat1 : chats){
+                            if(chat1.getUsers().size()==2 && chat1.getUsers().contains(user)
+                                    && chat1.getUsers().contains(ChatHandle.user)){
+                                check = false;
+                                try {
+                                    cellChats.add(addChatToList(chat1));
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+                        if(check){
+                            List<User> users = new ArrayList<>();
+                            users.add(ChatHandle.user);
+                            users.add(user);
+                            ChatHandle.chatService.addChat(users);
+                            try {
+                                cellChats.add(addChatToList(user.getChats().get(user.getChats().size()-1)));
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+
+                    }
+
+                }
+            }
+        });
+
         usersListView.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                ChatList.get(usersListView.getItems().get(usersListView.getSelectionModel().getSelectedIndex()));
+                if(usersListView.getItems().size()!=0){
+                    try {
+                        showChat(ChatList.get(usersListView.getItems().get(usersListView.getSelectionModel().getSelectedIndex())));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
         });
 
@@ -118,7 +199,49 @@ public class SocialNetworkApplication extends Application{
     public void vocalMessageClicked(MouseEvent mouseEvent) {
     }
 
-    public void sendMassage(MouseEvent mouseEvent) {
+    public void sendMassage(MouseEvent mouseEvent) throws IOException {
+        if(chat!=null){
+            if(chat.getUsers().size()==2){
+                User user;
+                if(chat.getUsers().get(0)==ChatHandle.user){
+                    user = chat.getUsers().get(0);
+                }
+                else{
+                    user = chat.getUsers().get(1);
+                }
+                if(!user.getBlockList().contains(ChatHandle.user)){
+                    ChatHandle.chatService.addMassage(chat,ChatHandle.user,messageField.getText(),null);
+                    FXMLLoader loader = new FXMLLoader();
+                    GridPane gridPane;
+                    gridPane  =  loader.load(getClass().getResource("massage_text_in.fxml").openStream());
+                    MassageTextOut controller = loader.getController();
+                    massagesTextOut.add(controller);
+                    controller.setText(ChatHandle.user.getUsername()+"\n"+messageField.getText());
+                    controller.setTime(LocalDateTime.now().getHour()+":"+LocalDateTime.now().getMinute());
+                    massageListView.getItems().add(gridPane);
+                }
+
+            }
+            else{
+                if(chat.getAdmins().contains(ChatHandle.user)||chat.getClosed()==false){
+                    ChatHandle.chatService.addMassage(chat,ChatHandle.user,messageField.getText(),null);
+                    FXMLLoader loader = new FXMLLoader();
+                    GridPane gridPane;
+                    gridPane  =  loader.load(getClass().getResource("massage_text_in.fxml").openStream());
+                    MassageTextOut controller = loader.getController();
+                    massagesTextOut.add(controller);
+                    controller.setText(ChatHandle.user.getUsername()+"\n"+messageField.getText());
+                    controller.setTime(LocalDateTime.now().getHour()+":"+LocalDateTime.now().getMinute());
+                    massageListView.getItems().add(gridPane);
+                }
+                else{
+                    System.out.println("the group is closed");
+                }
+            }
+        }
+
+
+
     }
 
     public CellChat addChatToList(Chat chat) throws IOException {
@@ -139,11 +262,54 @@ public class SocialNetworkApplication extends Application{
                 .get(chat.getMassages().size()-1).getCreateDateTime().getMinute());
         usersListView.getItems().add(gridPane);
         ChatList.put(gridPane,chat);
-        usersListView.setFixedCellSize(160);
         return controller;
     }
 
-    public void showChat(Chat chat){
+    public void showChat(Chat chat) throws IOException {
+        this.chat = chat;
+        massageList.clear();
+        massagesTextIn.clear();
+        massagesTextOut.clear();
+        massageListView.getItems().clear();
+        for (Massage massage : chat.getMassages()) {
+            FXMLLoader loader = new FXMLLoader();
+            GridPane gridPane;
+            if(massage.getUser()==ChatHandle.user){
+                gridPane  =  loader.load(getClass().getResource("massage_text_in.fxml").openStream());
+                MassageTextOut controller = loader.getController();
+                massagesTextOut.add(controller);
+                controller.setText(massage.getUser().getUsername()+"\n"+massage.getText());
+                controller.setTime(massage.getCreateDateTime().getHour()+":"+massage.getCreateDateTime().getMinute());
+            }
+            else{
+                gridPane  =  loader.load(getClass().getResource("massage_text_out.fxml").openStream());
+                MassageTextIn controller = loader.getController();
+                massagesTextIn.add(controller);
+                controller.setText(massage.getUser().getUsername()+"\n"+massage.getText());
+                controller.setTime(massage.getCreateDateTime().getHour()+":"+massage.getCreateDateTime().getMinute());
+            }
+            massageListView.getItems().add(gridPane);
+        }
+
+    }
+
+    public void addChat(){
+
+    }
+
+    public void chatByFollower(MouseEvent mouseEvent) {
+        List<User> users = ChatHandle.userService.getUserForShowPosts(ChatHandle.user);
+        List<User> temp = new ArrayList<>();
+        for (User user : users) {
+            for (Chat chat1 : chats) {
+                if (chat1.getUsers().contains(user) && chat1.getUsers().size()==2){
+                    temp.add(user);
+                }
+            }
+        }
+        for (User user : temp) {
+            users.remove(user);
+        }
 
     }
 }
