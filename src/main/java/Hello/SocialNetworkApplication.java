@@ -6,7 +6,6 @@ import entity.User;
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -14,14 +13,17 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import utils.input.Input;
+
 import utils.menu.ShowAndRunMenu;
 
+import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -29,7 +31,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import static Hello.ChatHandle.user;
-import static utils.menu.ChatMenu.number;
 
 public class SocialNetworkApplication extends Application{
 
@@ -52,6 +53,8 @@ public class SocialNetworkApplication extends Application{
     public List<CellChat> cellGroup = new ArrayList<>();
     public List<MassageTextIn> massagesTextIn = new ArrayList<>();
     public List<MassageTextOut> massagesTextOut = new ArrayList<>();
+    public List<MassageImageOut> massageImageOut = new ArrayList<>();
+    public List<MassageImageIn> massageImageIn = new ArrayList<>();
     public HashMap<GridPane,Chat> ChatList = new HashMap<>();
     public HashMap<GridPane,User> userGroupList = new HashMap<>();
     public HashMap<GridPane,User> userList = new HashMap<>();
@@ -61,6 +64,7 @@ public class SocialNetworkApplication extends Application{
     public TextField nameGroup;
     public GridPane createGroup;
     public ListView userGroupListView;
+    public ImageView yeeeeees;
 
     public static void main(String[] args) {
         new ShowAndRunMenu().runMenu();
@@ -81,7 +85,7 @@ public class SocialNetworkApplication extends Application{
 
     public void initialize() throws IOException {
         createGroup.setVisible(false);
-        massageListView.setFixedCellSize(160);
+        massageListView.setFixedCellSize(250);
         usersListView.setFixedCellSize(100);
         userGroupListView.setFixedCellSize(100);
         right.minWidthProperty().bind(divider.widthProperty().multiply(0.4));
@@ -248,7 +252,56 @@ public class SocialNetworkApplication extends Application{
     public void settingsButtonClicked(MouseEvent mouseEvent) {
     }
 
-    public void attachFile(MouseEvent mouseEvent) {
+    public void attachFile(MouseEvent mouseEvent) throws IOException {
+        if(chat!=null){
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Select Profile Picture");
+            fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Image Files", "*.png", "*jpg"));
+            File selectedFile = fileChooser.showOpenDialog(null);
+            Image image = new Image(selectedFile.toURI().toString());
+            if(chat.getUsers().size()==2){
+                User user;
+                if(chat.getUsers().get(0)== ChatHandle.user){
+                    user = chat.getUsers().get(0);
+                }
+                else{
+                    user = chat.getUsers().get(1);
+                }
+                if(!user.getBlockList().contains(ChatHandle.user)){
+                    ChatHandle.chatService.addMassage(chat, ChatHandle.user,selectedFile.toURI().toString(),null);
+                    FXMLLoader loader5 =new FXMLLoader(getClass().getResource("massage_image_out.fxml"));
+                    GridPane gridPane  =  loader5.load();
+                    MassageImageOut controller = loader5.getController();
+                    massageImageOut.add(controller);
+                    controller.setText(ChatHandle.user.getUsername());
+                    controller.setTime(LocalDateTime.now().getHour()+":"+LocalDateTime.now().getMinute());
+                    controller.setImage(image);
+                    massageListView.getItems().add(gridPane);
+                    massageListView.scrollTo(chat.getMassages().size());
+                }
+
+            }
+            else{
+                if(chat.getAdmins().contains(user)||chat.getClosed()==false){
+                    ChatHandle.chatService.addMassage(chat, user,selectedFile.toURI().toString(),null);
+                    FXMLLoader loader4 =new FXMLLoader(getClass().getResource("massage_image_out.fxml"));
+                    GridPane gridPane  =  loader4.load();
+                    MassageImageOut controller = loader4.getController();
+                    massageImageOut.add(controller);
+                    controller.setText(user.getUsername());
+                    controller.setTime(LocalDateTime.now().getHour()+":"+LocalDateTime.now().getMinute());
+                    controller.setImage(image);
+                    massageListView.getItems().add(gridPane);
+                    massageListView.scrollTo(chat.getMassages().size());
+                }
+                else{
+                    System.out.println("the group is closed");
+                }
+            }
+        }
+
+
+
     }
 
     public void smileyButtonClicked(MouseEvent mouseEvent) {
@@ -277,6 +330,7 @@ public class SocialNetworkApplication extends Application{
                     controller.setText(ChatHandle.user.getUsername()+"\n"+messageField.getText());
                     controller.setTime(LocalDateTime.now().getHour()+":"+LocalDateTime.now().getMinute());
                     massageListView.getItems().add(gridPane);
+                    massageListView.scrollTo(chat.getMassages().size());
                 }
 
             }
@@ -285,12 +339,13 @@ public class SocialNetworkApplication extends Application{
                     ChatHandle.chatService.addMassage(chat, user,messageField.getText(),null);
                     FXMLLoader loader = new FXMLLoader();
                     GridPane gridPane;
-                    gridPane  =  loader.load(getClass().getResource("massage_text_in.fxml").openStream());
+                    gridPane  =  loader.load(getClass().getResource("massage_text_out.fxml").openStream());
                     MassageTextOut controller = loader.getController();
                     massagesTextOut.add(controller);
                     controller.setText(user.getUsername()+"\n"+messageField.getText());
                     controller.setTime(LocalDateTime.now().getHour()+":"+LocalDateTime.now().getMinute());
                     massageListView.getItems().add(gridPane);
+                    massageListView.scrollTo(chat.getMassages().size());
                 }
                 else{
                     System.out.println("the group is closed");
@@ -347,23 +402,47 @@ public class SocialNetworkApplication extends Application{
         massageListView.getItems().clear();
         for (Massage massage : chat.getMassages()) {
             FXMLLoader loader = new FXMLLoader();
-            GridPane gridPane;
-            if(massage.getUser()== user){
-                gridPane  =  loader.load(getClass().getResource("massage_text_out.fxml").openStream());
-                MassageTextOut controller = loader.getController();
-                massagesTextOut.add(controller);
-                controller.setText(massage.getUser().getUsername()+"\n"+massage.getText());
-                controller.setTime(massage.getCreateDateTime().getHour()+":"+massage.getCreateDateTime().getMinute());
+            GridPane gridPane = null;
+            if(massage.getText().indexOf(".png")==-1 && massage.getText().indexOf("file:")==-1  ){
+                if(massage.getUser()== user){
+                    gridPane  =  loader.load(getClass().getResource("massage_text_out.fxml").openStream());
+                    MassageTextOut controller = loader.getController();
+                    massagesTextOut.add(controller);
+                    controller.setText(massage.getUser().getUsername()+"\n"+massage.getText());
+                    controller.setTime(massage.getCreateDateTime().getHour()+":"+massage.getCreateDateTime().getMinute());
+                }
+                else{
+                    gridPane  =  loader.load(getClass().getResource("massage_text_in.fxml").openStream());
+                    MassageTextIn controller = loader.getController();
+                    massagesTextIn.add(controller);
+                    controller.setText(massage.getUser().getUsername()+"\n"+massage.getText());
+                    controller.setTime(massage.getCreateDateTime().getHour()+":"+massage.getCreateDateTime().getMinute());
+                }
             }
             else{
-                gridPane  =  loader.load(getClass().getResource("massage_text_in.fxml").openStream());
-                MassageTextIn controller = loader.getController();
-                massagesTextIn.add(controller);
-                controller.setText(massage.getUser().getUsername()+"\n"+massage.getText());
-                controller.setTime(massage.getCreateDateTime().getHour()+":"+massage.getCreateDateTime().getMinute());
+                if(massage.getUser()== user){
+                    FXMLLoader loader6 =new FXMLLoader(getClass().getResource("massage_image_out.fxml"));
+                    gridPane  =  loader6.load();
+                    MassageImageOut controller = loader6.getController();
+                    massageImageOut.add(controller);
+                    controller.setText(massage.getUser().getUsername());
+                    controller.setImage(new Image(massage.getText()));
+                    controller.setTime(massage.getCreateDateTime().getHour()+":"+massage.getCreateDateTime().getMinute());
+                }
+                else{
+                    FXMLLoader loader7 =new FXMLLoader(getClass().getResource("massage_image_in.fxml"));
+                    gridPane  =  loader7.load();
+                    MassageImageIn controller = loader.getController();
+                    massageImageIn.add(controller);
+                    controller.setText(massage.getUser().getUsername());
+                    controller.setImage(new Image(massage.getText()));
+                    controller.setTime(massage.getCreateDateTime().getHour()+":"+massage.getCreateDateTime().getMinute());
+                }
             }
+
             massageListView.getItems().add(gridPane);
         }
+        massageListView.scrollTo(chat.getMassages().size());
 
     }
 

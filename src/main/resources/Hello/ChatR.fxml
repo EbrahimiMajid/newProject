@@ -184,7 +184,7 @@
                             </VBox>
                             <HBox alignment="CENTER_RIGHT" prefHeight="68.0" prefWidth="549.0" spacing="20.0">
                                 <children>
-                                    <ImageView fitHeight="40.0" fitWidth="40.0" onMouseClicked="#searchChatRoom"
+                                    <ImageView fx:id="yeeeeees" fitHeight="40.0" fitWidth="40.0" onMouseClicked="#searchChatRoom"
                                                pickOnBounds="true" preserveRatio="true">
                                         <image>
                                             <Image url="@../resources/img/search.png"/>
