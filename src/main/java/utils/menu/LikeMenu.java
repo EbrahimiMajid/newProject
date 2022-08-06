@@ -33,12 +33,12 @@ public class LikeMenu extends Menu{
                         boolean isLiked = isIn(user, likes);
                         if (isLiked){
                             post.getLikes().remove(user);
-                            System.out.println("you disliked this tweet/before you disliked this tweet");
+                            System.out.println("you disliked this post/before you disliked this post");
 
                         }
                         else {
                             post.getLikes().add(user);
-                            System.out.println("you liked this tweet");
+                            System.out.println("you liked this post");
                         }
                         postService.save(post);
                     }

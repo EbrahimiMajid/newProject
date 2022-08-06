@@ -244,6 +244,11 @@ public class ChatServiceImpl extends BaseEntityServiceImpl<Chat, Long, ChatRepos
                 entityManager.merge(user1);
                 transaction.commit();
             }
+            transaction.begin();
+            entityManager.createQuery(
+                    "DELETE FROM Chat m WHERE m.id=: g "
+            ).setParameter("g",chat.getId()).executeUpdate();
+            transaction.commit();
             System.out.println("The chat was deleted.");
         }
     }

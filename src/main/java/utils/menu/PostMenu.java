@@ -32,7 +32,7 @@ public class PostMenu extends Menu{
                     break;
                 case 2:
                     for (Post post : user1.getPosts()) {
-                        System.out.println(post);
+                        System.out.println(post.getText());
                     }
 
                     break;

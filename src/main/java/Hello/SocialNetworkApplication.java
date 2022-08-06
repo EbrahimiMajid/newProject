@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import static Hello.ChatHandle.user;
 import static utils.menu.ChatMenu.number;
 
 public class SocialNetworkApplication extends Application{
@@ -62,13 +63,13 @@ public class SocialNetworkApplication extends Application{
     public ListView userGroupListView;
 
     public static void main(String[] args) {
-        //new ShowAndRunMenu().runMenu();
+        new ShowAndRunMenu().runMenu();
         launch();
     }
 
     @Override
     public void start(Stage stage) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("chatroom.fxml"));
+        FXMLLoader loader = new FXMLLoader(SocialNetworkApplication.class.getResource("ChatR.fxml"));
         Scene scene = new Scene(loader.load(), 1000, 600);
         stage.setMinHeight(640);
         stage.setMinWidth(1040);
@@ -82,9 +83,10 @@ public class SocialNetworkApplication extends Application{
         createGroup.setVisible(false);
         massageListView.setFixedCellSize(160);
         usersListView.setFixedCellSize(100);
+        userGroupListView.setFixedCellSize(100);
         right.minWidthProperty().bind(divider.widthProperty().multiply(0.4));
         left.minWidthProperty().bind(divider.widthProperty().multiply(0.4));
-        chats = ChatHandle.chatService.showChats(ChatHandle.user);
+        chats = ChatHandle.chatService.showChats(user);
         send.setVisible(false);
 
         messageField.textProperty().addListener(new ChangeListener<String>() {
@@ -107,9 +109,9 @@ public class SocialNetworkApplication extends Application{
                     ChatList.clear();
                     usersListView.getItems().clear();
                     List<Chat> chats1 = new ArrayList<>();
-                    for (Chat chat : chats) {
+                    for (Chat chat : user.getChats()) {
                         User user;
-                        if(chat.getUsers().get(0)==ChatHandle.user)
+                        if(chat.getUsers().get(0)== ChatHandle.user)
                             user = chat.getUsers().get(1);
                         else
                             user = chat.getUsers().get(0);
@@ -128,7 +130,7 @@ public class SocialNetworkApplication extends Application{
                     }
                     int size = chats1.size();
                     for(int i=0; i < size; i++){
-                        ChatHandle.chatService.deleteChat(chats1.get(i),ChatHandle.user);
+                        ChatHandle.chatService.deleteChat(chats1.get(i), user);
                     }
                 }
                 else{
@@ -138,7 +140,7 @@ public class SocialNetworkApplication extends Application{
                     if(ChatHandle.userService.existByUsername(searchBox.getText())!=null){
                         User user = ChatHandle.userService.existByUsername(searchBox.getText());
                         Boolean check = true;
-                        for (Chat chat1 : chats){
+                        for (Chat chat1 : ChatHandle.user.getChats()){
                             if(chat1.getUsers().size()==2 && chat1.getUsers().contains(user)
                                     && chat1.getUsers().contains(ChatHandle.user)){
                                 check = false;
@@ -171,33 +173,38 @@ public class SocialNetworkApplication extends Application{
         usersListView.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                if(chatByFollower==false){
-                    if(usersListView.getItems().size()!=0){
-                        try {
-                            showChat(ChatList.get(usersListView.getItems().get(usersListView.getSelectionModel().getSelectedIndex())));
-                        } catch (IOException e) {
-                            e.printStackTrace();
+                if(usersListView.getSelectionModel().getSelectedIndex()!= -1){
+                    if(chatByFollower==false){
+                        if(usersListView.getItems().size()!=0 ){
+                            try {
+                                showChat(ChatList.get(usersListView.getItems().get(usersListView.getSelectionModel().getSelectedIndex())));
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        else{
+
                         }
                     }
                     else{
-
-                    }
-                }
-                else{
-                    if(usersListView.getItems().size()!=0){
-                        User user = userList.get(usersListView.getItems().get(usersListView.getSelectionModel().getSelectedIndex()));
-                        List<User> users = new ArrayList<>();
-                        users.add(ChatHandle.user);
-                        users.add(user);
-                        ChatHandle.chatService.addChat(users);
-                        try {
-                            cellChats.add(addChatToList(user.getChats().get(user.getChats().size()-1)));
-                        } catch (IOException e) {
-                            e.printStackTrace();
+                        if(usersListView.getItems().size()!=0){
+                            User user = userList.get(usersListView.getItems().get(usersListView.getSelectionModel().getSelectedIndex()));
+                            List<User> users = new ArrayList<>();
+                            users.add(ChatHandle.user);
+                            users.add(user);
+                            ChatHandle.chatService.addChat(users);
+                            for (Chat userChat : ChatHandle.user.getChats()) {
+                                try {
+                                    cellChats.add(addChatToList(userChat));
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
                         }
+                        chatByFollower=false;
                     }
-                    chatByFollower=false;
                 }
+
             }
         });
         userGroupListView.setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -215,6 +222,7 @@ public class SocialNetworkApplication extends Application{
         }
 
 
+
     }
 
     public void minimizeApp(MouseEvent mouseEvent) {
@@ -224,9 +232,9 @@ public class SocialNetworkApplication extends Application{
     }
 
     public void slideMenuClicked(MouseEvent mouseEvent) throws IOException {
-        if(ChatHandle.user.getFollowers().size()!=0){
+        if(user.getFollowers().size()!=0){
             createGroup.setVisible(true);
-            for (User user : ChatHandle.user.getFollowers()) {
+            for (User user : user.getFollowers()) {
                 cellGroup.add(newGroup(user));
             }
         }
@@ -253,17 +261,17 @@ public class SocialNetworkApplication extends Application{
         if(chat!=null){
             if(chat.getUsers().size()==2){
                 User user;
-                if(chat.getUsers().get(0)==ChatHandle.user){
+                if(chat.getUsers().get(0)== ChatHandle.user){
                     user = chat.getUsers().get(0);
                 }
                 else{
                     user = chat.getUsers().get(1);
                 }
                 if(!user.getBlockList().contains(ChatHandle.user)){
-                    ChatHandle.chatService.addMassage(chat,ChatHandle.user,messageField.getText(),null);
+                    ChatHandle.chatService.addMassage(chat, ChatHandle.user,messageField.getText(),null);
                     FXMLLoader loader = new FXMLLoader();
                     GridPane gridPane;
-                    gridPane  =  loader.load(getClass().getResource("massage_text_in.fxml").openStream());
+                    gridPane  =  loader.load(getClass().getResource("massage_text_out.fxml").openStream());
                     MassageTextOut controller = loader.getController();
                     massagesTextOut.add(controller);
                     controller.setText(ChatHandle.user.getUsername()+"\n"+messageField.getText());
@@ -273,14 +281,14 @@ public class SocialNetworkApplication extends Application{
 
             }
             else{
-                if(chat.getAdmins().contains(ChatHandle.user)||chat.getClosed()==false){
-                    ChatHandle.chatService.addMassage(chat,ChatHandle.user,messageField.getText(),null);
+                if(chat.getAdmins().contains(user)||chat.getClosed()==false){
+                    ChatHandle.chatService.addMassage(chat, user,messageField.getText(),null);
                     FXMLLoader loader = new FXMLLoader();
                     GridPane gridPane;
                     gridPane  =  loader.load(getClass().getResource("massage_text_in.fxml").openStream());
                     MassageTextOut controller = loader.getController();
                     massagesTextOut.add(controller);
-                    controller.setText(ChatHandle.user.getUsername()+"\n"+messageField.getText());
+                    controller.setText(user.getUsername()+"\n"+messageField.getText());
                     controller.setTime(LocalDateTime.now().getHour()+":"+LocalDateTime.now().getMinute());
                     massageListView.getItems().add(gridPane);
                 }
@@ -295,9 +303,9 @@ public class SocialNetworkApplication extends Application{
     }
 
     public CellChat newGroup(User user) throws IOException {
-        FXMLLoader loader = new FXMLLoader();
-        GridPane gridPane  =  loader.load(getClass().getResource("cell_chat.fxml").openStream());
-        CellChat controller = loader.getController();
+        FXMLLoader loader2 =new FXMLLoader(getClass().getResource("cell_chat.fxml"));
+        GridPane gridPane  =  loader2.load();
+        CellChat controller = loader2.getController();
         controller.setText(user.getUsername());
         controller.setTime("");
         controller.setImage("okey");
@@ -308,21 +316,24 @@ public class SocialNetworkApplication extends Application{
     }
 
     public CellChat addChatToList(Chat chat) throws IOException {
-        FXMLLoader loader = new FXMLLoader();
-        GridPane gridPane  =  loader.load(getClass().getResource("cell_chat.fxml").openStream());
-        CellChat controller = loader.getController();
+        FXMLLoader loader1 =new FXMLLoader(getClass().getResource("cell_chat.fxml"));
+        GridPane gridPane  =  loader1.load();
+        CellChat controller = loader1.getController();
         if(chat.getName()!=null)
             controller.setText(chat.getName());
         else{
-            if(chat.getUsers().get(0)== ChatHandle.user)
+            if(chat.getUsers().get(0)== user)
                 controller.setText(chat.getUsers().get(1).getUsername());
             else{
                 controller.setText(chat.getUsers().get(0).getUsername());
             }
         }
-        controller.setTime(chat.getMassages().get(chat.getMassages().size()-1).
+        if(chat.getMassages().size()!=0)
+            controller.setTime(chat.getMassages().get(chat.getMassages().size()-1).
                 getCreateDateTime().getHour()+":"+chat.getMassages()
                 .get(chat.getMassages().size()-1).getCreateDateTime().getMinute());
+        else
+            controller.setTime("");
         usersListView.getItems().add(gridPane);
         ChatList.put(gridPane,chat);
         return controller;
@@ -337,15 +348,15 @@ public class SocialNetworkApplication extends Application{
         for (Massage massage : chat.getMassages()) {
             FXMLLoader loader = new FXMLLoader();
             GridPane gridPane;
-            if(massage.getUser()==ChatHandle.user){
-                gridPane  =  loader.load(getClass().getResource("massage_text_in.fxml").openStream());
+            if(massage.getUser()== user){
+                gridPane  =  loader.load(getClass().getResource("massage_text_out.fxml").openStream());
                 MassageTextOut controller = loader.getController();
                 massagesTextOut.add(controller);
                 controller.setText(massage.getUser().getUsername()+"\n"+massage.getText());
                 controller.setTime(massage.getCreateDateTime().getHour()+":"+massage.getCreateDateTime().getMinute());
             }
             else{
-                gridPane  =  loader.load(getClass().getResource("massage_text_out.fxml").openStream());
+                gridPane  =  loader.load(getClass().getResource("massage_text_in.fxml").openStream());
                 MassageTextIn controller = loader.getController();
                 massagesTextIn.add(controller);
                 controller.setText(massage.getUser().getUsername()+"\n"+massage.getText());
@@ -356,12 +367,8 @@ public class SocialNetworkApplication extends Application{
 
     }
 
-    public void addGroup(){
-
-    }
-
     public void chatByFollower(MouseEvent mouseEvent) throws IOException {
-        List<User> users = ChatHandle.userService.getUserForShowPosts(ChatHandle.user);
+        List<User> users = ChatHandle.userService.getUserForShowPosts(user);
         List<User> temp = new ArrayList<>();
         for (User user : users) {
             for (Chat chat1 : chats) {
@@ -379,9 +386,9 @@ public class SocialNetworkApplication extends Application{
             ChatList.clear();
             usersListView.getItems().clear();
             for (User user : users) {
-                FXMLLoader loader = new FXMLLoader();
-                GridPane gridPane  =  loader.load(getClass().getResource("cell_chat.fxml").openStream());
-                CellChat controller = loader.getController();
+                FXMLLoader loader3 =new FXMLLoader(getClass().getResource("cell_chat.fxml"));
+                GridPane gridPane  =  loader3.load();
+                CellChat controller = loader3.getController();
                 controller.setText(user.getUsername());
                 controller.setTime("");
                 usersListView.getItems().add(gridPane);
@@ -401,20 +408,24 @@ public class SocialNetworkApplication extends Application{
             }
             if(test){
                 List<User> users = new ArrayList<>();
-                users.add(ChatHandle.user);
+                users.add(user);
                 for (CellChat controller : cellGroup) {
                     if(controller.avatarImage.isVisible()){
                         users.add(userGroupList.get(controller.gridpane));
                     }
                 }
-                ChatHandle.chatService.addChat(users);
+                ChatHandle.chatService.addGroup(users,nameGroup.getText());
+                try {
+                    cellChats.add(addChatToList(ChatHandle.user.getChats().get(ChatHandle.user.getChats().size()-1)));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
-            else{
-                createGroup.setVisible(false);
-                cellGroup.clear();
-                userGroupList.clear();
-                userGroupListView.getItems().clear();
-            }
+            createGroup.setVisible(false);
+            cellGroup.clear();
+            userGroupList.clear();
+            userGroupListView.getItems().clear();
+
         }
     }
 }

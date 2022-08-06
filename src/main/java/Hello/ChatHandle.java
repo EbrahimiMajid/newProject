@@ -5,6 +5,7 @@ import service.CommentService;
 import service.PostService;
 import service.UserService;
 import utils.ApplicationContext;
+import utils.menu.LikeCommentShow;
 
 public class ChatHandle {
     public static User user = null;
@@ -15,5 +16,6 @@ public class ChatHandle {
 
     public ChatHandle(User user) {
         this.user = user;
+        //LikeCommentShow.profileShow(userService.findById(Long.valueOf(5)),user);
     }
 }

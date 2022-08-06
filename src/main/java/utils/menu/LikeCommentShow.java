@@ -6,6 +6,7 @@ import entity.Post;
 import entity.User;
 import service.CommentService;
 import service.PostService;
+import service.UserService;
 import utils.ApplicationContext;
 import utils.input.Input;
 
@@ -19,11 +20,12 @@ public class LikeCommentShow extends Menu{
     private final Post post;
     LikeCommentShow(User user, Post post)
     {
-        super(new String[]{"Like/Dislike","Comment","Show Likes","Back"});
+        super(new String[]{"Like/Dislike","Comment","Show Likes","show Profile","Back"});
         this.user=user;
         this.post=post;
     }
     private final CommentService commentService = ApplicationContext.getCommentService();
+    private static final UserService userService = ApplicationContext.getUserService();
     PostService postService=ApplicationContext.getPostService();
     Scanner scanner=new Scanner(System.in);
     public void runMenu()
@@ -159,8 +161,39 @@ public class LikeCommentShow extends Menu{
                         }
                     break;
                 case 4:
+                    profileShow(post.getUser(),user);
+                    break;
+                case 5:
                     return;
             }
+        }
+    }
+    public static void profileShow(User user1,User user){
+        if(user1!=null){
+            System.out.println(user1.getUserProfile().getFirstName()
+                    +"  "+user1.getUserProfile().getLastName()+" :");
+            System.out.println("id :"+user1.getId());
+            System.out.println("followers :"+user1.getFollowers().size());
+            System.out.println();
+            if(user.getFollowers().contains(user1)){
+                System.out.println("1. unfollow");
+                System.out.println("2. back");
+                int check = ChatMenu.number(2).intValue();
+                if(check==1){
+                    userService.addFollower(user1,user);
+                }
+            }
+            else{
+                System.out.println("1. follow");
+                System.out.println("2. back");
+                int check = ChatMenu.number(2).intValue();
+                if(check==1){
+                    userService.addFollower(user1,user);
+                }
+            }
+        }
+        else{
+            System.out.println("This user does not exist!");
         }
     }
 }

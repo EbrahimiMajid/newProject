@@ -187,7 +187,8 @@ public class UserServiceImpl extends BaseEntityServiceImpl<User, Long , UserRepo
     @Override
     public List<User> getUserForShowPosts(User user) {
         List<User> users = new ArrayList<>();
-        users.add(user);
+        if(!user.getFollowers().contains(user))
+            users.add(user);
         users.addAll(user.getFollowers());
         users.addAll(user.getFollowings());
         return users;

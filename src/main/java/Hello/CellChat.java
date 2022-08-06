@@ -24,6 +24,6 @@ public class CellChat {
     }
 
     public void setImage(String s){
-        avatarImage.setImage(new Image("resources/img/"+s+".png"));
+        //avatarImage.setImage(new Image("resources/img/"+s+".png"));
     }
 }

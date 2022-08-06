@@ -19,7 +19,7 @@ public class ChatMenu extends Menu{
     private final ChatService chatService;
     public final UserService userService = ApplicationContext.getUserService();
     public ChatMenu(User user,ChatService chatService) {
-        super(new String[]{"Add Chat","Show Chats and Groups","Delete Chat","Create Group","Back"});
+        super(new String[]{"Add Chat","Show Chats and Groups","Create Group","Back"});
         this.user = user;
         this.chatService = chatService;
     }
@@ -70,9 +70,6 @@ public class ChatMenu extends Menu{
                     }
                     break;
                 case 3:
-                    deleteChat(user1);
-                    break;
-                case 4:
                     createGroup();
                     break;
                 case 5:

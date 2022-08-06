@@ -46,11 +46,11 @@ public class ChatRepositoryImpl extends BaseEntityRepositoryImpl<Chat, Long>
                 chats2.add(chat);
             }
         }
-        return chats2;
+
         //-----------------------
         //ترتیب نشان دادن چت ها
         //----------------------
-        /*for (int i = 0; i < chats2.size(); i++) {
+        for (int i = 0; i < chats2.size(); i++) {
             System.out.print(i+1 +".");
             if(chats2.get(i).getName()==null){
                 System.out.println(chats2.get(i).getUsers().get(1).getUserProfile().getFirstName()+"   "+
@@ -61,7 +61,8 @@ public class ChatRepositoryImpl extends BaseEntityRepositoryImpl<Chat, Long>
             }
 
 
-        }*/
+        }
+        return chats2;
     }
 
     @Override

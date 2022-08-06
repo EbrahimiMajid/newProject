@@ -17,8 +17,7 @@ public class ProfileMenu extends Menu{
     private static final PostService postService = ApplicationContext.getPostService();
     private static final CommentService commentService = ApplicationContext.getCommentService();
     public ProfileMenu(User user) {
-        super(new String[]{"Edit Profile","Delete Account","Post","Comment",
-                "like","Show Post Of All Users","Explore","Chat",
+        super(new String[]{"Edit Profile","Delete Account","Post","Comment","mainMenu","like","Explore","Chat",
                 "Show Followers","Show Followings","User suggestion","Advertisement offer","Log out"});
         this.user = user;
         System.out.println("Welcome to your work bench... \n"
@@ -43,12 +42,9 @@ public class ProfileMenu extends Menu{
                     new CommentMenu(user , commentService  , userService).runMenu();
                     break;
                 case 5:
-                    new LikeMenu(user , userService , postService).runMenu();
+                    new MainMenu(user).runMenu();
                 case 6:
-                    List<User> users = userService.showPostAllOfUsers();
-                    for (User user1 : users){
-                        System.out.println(user1.getPosts());
-                    }
+                    new LikeMenu(user , userService , postService).runMenu();
                     break;
                 case 7:
                     search();
@@ -226,7 +222,7 @@ public class ProfileMenu extends Menu{
                 System.out.println("2. back");
                 int check = ChatMenu.number(2).intValue();
                 if(check==1){
-                    userService.addFollower(user,user1);
+                    userService.addFollower(user1,user);
                 }
             }
             else{
@@ -234,9 +230,12 @@ public class ProfileMenu extends Menu{
                 System.out.println("2. back");
                 int check = ChatMenu.number(2).intValue();
                 if(check==1){
-                    userService.addFollower(user,user1);
+                    userService.addFollower(user1,user);
                 }
             }
+        }
+        else{
+            System.out.println("This user does not exist!");
         }
     }
 }
