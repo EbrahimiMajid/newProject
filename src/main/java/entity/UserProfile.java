@@ -20,6 +20,7 @@ public class UserProfile extends BaseEntity<Long> {
     public static final String AGE = "age";
     public static final String BIRTH_DAY = "birth_day";
     public static final String USER_ID = "user_id";
+    public static final String TYPE_USER="type_user";
 
     @Column(name = FIRST_NAME, nullable = false)
     private String firstName;
@@ -35,6 +36,10 @@ public class UserProfile extends BaseEntity<Long> {
 
     @Column(name = AGE)
     private Integer age;
+
+    @Column(name = TYPE_USER)
+    private String typeUser;
+
     @Lob
     private String bio;
 

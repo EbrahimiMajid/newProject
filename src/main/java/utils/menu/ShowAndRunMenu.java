@@ -7,7 +7,7 @@ public class ShowAndRunMenu extends Menu{
     }
 
     public void runMenu() {
-        //while (true) {
+        while (true) {
             print();
             switch (chooseOperation()) {
                 case 1:
@@ -16,6 +16,6 @@ public class ShowAndRunMenu extends Menu{
                 case 2:
                     return;
             }
-        //}
+        }
     }
 }

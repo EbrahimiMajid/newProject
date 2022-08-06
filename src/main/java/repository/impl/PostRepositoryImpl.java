@@ -29,8 +29,10 @@ public  class PostRepositoryImpl extends BaseEntityRepositoryImpl<Post, Long>
         TypedQuery<Post> query = entityManager.createQuery(
                 "from Post t WHERE t.user.id    =: id", Post.class).setParameter("id", user.getId());
 
-        query.getResultList().forEach(System.out::println);
-
+        for (int i=0;i<query.getResultList().size();i++)
+        {
+            System.out.println(query.getResultList().get(i).getText());
+        }
 
     }
     @Override

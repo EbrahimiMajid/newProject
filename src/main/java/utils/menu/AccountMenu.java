@@ -14,7 +14,7 @@ public class AccountMenu extends Menu{
     }
 
     public void runMenu() {
-        //while (true) {
+        while (true) {
             print();
             switch (chooseOperation()) {
                 case 1:
@@ -25,7 +25,7 @@ public class AccountMenu extends Menu{
                     }
                     ApplicationContext.getUserService().save(user);
                     new ChatHandle(user);
-                    //new ProfileMenu(user).runMenu();
+                    new ProfileMenu(user).runMenu();
                     break;
                 case 2:
                     ApplicationContext.getUserService().signUp();
@@ -33,6 +33,6 @@ public class AccountMenu extends Menu{
                 case 3:
                     return;
             }
-        //}
+        }
     }
 }

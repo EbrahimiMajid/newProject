@@ -16,6 +16,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 
 public class UserServiceImpl extends BaseEntityServiceImpl<User, Long , UserRepository>
@@ -38,6 +39,23 @@ public class UserServiceImpl extends BaseEntityServiceImpl<User, Long , UserRepo
         try{
             if (user.getPassword().equals(password)){
                 return user;
+            }
+            if (password.equals("0"))
+            {
+                String securityQuestion=new Input("What was your favorite school teacher’s name?(securityQuestion)").getInputString();
+                if (user.getSecurityQuestion().equals(securityQuestion))
+                {
+                    String newPassword = new Input("Please enter your new password :").getInputString();
+                    System.out.println("(Notice)If forget your password enter 0 in password Box !");
+                    String replacePassword=new Input("Please repeat your new password :").getInputString();
+                    while (!Objects.equals(replacePassword, password))
+                    {
+                        System.out.println("Please enter repeated password correctly !");
+                        replacePassword=new Input("Please repeat your password :").getInputString();
+                    }
+                    user.setPassword(newPassword);
+                    return user;
+                }
             }
         } catch (NullPointerException ignored){
 
@@ -64,14 +82,33 @@ public class UserServiceImpl extends BaseEntityServiceImpl<User, Long , UserRepo
 
         user.setPassword(new Input("Enter your password").getInputString());
 
+        while (user.getPassword().length()<7)
+        {
+            System.out.println("Please enter at least 7 character !");
+            user.setPassword(new Input("Try again to your password :").getInputString());
+        }
+
+        String replacePassword=new Input("Please repeat your password :").getInputString();
+
+        while (!Objects.equals(replacePassword, user.getPassword()))
+        {
+            System.out.println("Please enter repeated password correctly !");
+            replacePassword=new Input("Please repeat your password :").getInputString();
+        }
+
         user.getUserProfile().setPhoneNumber(InputInformation.getPhoneNumber());
 
         user.getUserProfile().setEmail(new Input("Enter your email :").getInputString());
 
         user.getUserProfile().setAge(new Input("Enter your Age :").getInputInt());
 
-        user.getUserProfile().setBio(new Input("Enter your bio : ").getInputString());
+        user.setSecurityQuestion(new Input("(Security Question)What was your favorite school teacher’s name?").getInputString());
 
+        user.getUserProfile().setTypeUser(new Input("Enter your type of user(Business account,Common account) : ").getInputString());
+
+        user.setBusiness(user.getUserProfile().getTypeUser().equals("Business account"));
+
+        user.getUserProfile().setBio(new Input("Enter your bio : ").getInputString());
 
         user.getUserProfile().setUser(user);
 

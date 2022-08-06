@@ -24,6 +24,14 @@ public class User extends BaseEntity<Long> {
 
    private String password;
 
+   private String securityQuestion;
+
+   private boolean isBusiness;
+
+   @ManyToOne
+   @JoinColumn(name = "advertise_id")
+   private Post advertise;
+
    @OneToOne(mappedBy = "user" ,cascade = CascadeType.ALL)
    private UserProfile userProfile = new UserProfile();
 
@@ -49,6 +57,9 @@ public class User extends BaseEntity<Long> {
            inverseJoinColumns = {@JoinColumn(name = "user_id",referencedColumnName = "id")}
    )
    private List<User> followers = new ArrayList<>();
+
+   @OneToMany(mappedBy = "user" ,cascade = CascadeType.ALL)
+   private List<NestedComment> nestedComments = new ArrayList<>();
 
    @OneToMany
    @JoinTable(name = "following_user_table",

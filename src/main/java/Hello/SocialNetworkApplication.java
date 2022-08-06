@@ -44,18 +44,25 @@ public class SocialNetworkApplication extends Application{
     public static Stage stage1;
     public ImageView send;
     public GridPane right;
-
+    public Boolean chatByFollower = false;
     public Chat chat;
     public List<Chat> chats;
     public List<CellChat> cellChats = new ArrayList<>();
+    public List<CellChat> cellGroup = new ArrayList<>();
     public List<MassageTextIn> massagesTextIn = new ArrayList<>();
     public List<MassageTextOut> massagesTextOut = new ArrayList<>();
     public HashMap<GridPane,Chat> ChatList = new HashMap<>();
+    public HashMap<GridPane,User> userGroupList = new HashMap<>();
+    public HashMap<GridPane,User> userList = new HashMap<>();
     public HashMap<GridPane,Massage> massageList = new HashMap<>();
     public TextField searchBox;
+    public ImageView okey;
+    public TextField nameGroup;
+    public GridPane createGroup;
+    public ListView userGroupListView;
 
     public static void main(String[] args) {
-        new ShowAndRunMenu().runMenu();
+        //new ShowAndRunMenu().runMenu();
         launch();
     }
 
@@ -63,8 +70,8 @@ public class SocialNetworkApplication extends Application{
     public void start(Stage stage) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("chatroom.fxml"));
         Scene scene = new Scene(loader.load(), 1000, 600);
-        stage.setMinHeight(600);
-        stage.setMinWidth(1000);
+        stage.setMinHeight(640);
+        stage.setMinWidth(1040);
         stage.setTitle("Chatroom");
         stage.setScene(scene);
         stage1 = stage;
@@ -72,6 +79,7 @@ public class SocialNetworkApplication extends Application{
     }
 
     public void initialize() throws IOException {
+        createGroup.setVisible(false);
         massageListView.setFixedCellSize(160);
         usersListView.setFixedCellSize(100);
         right.minWidthProperty().bind(divider.widthProperty().multiply(0.4));
@@ -100,7 +108,12 @@ public class SocialNetworkApplication extends Application{
                     usersListView.getItems().clear();
                     List<Chat> chats1 = new ArrayList<>();
                     for (Chat chat : chats) {
-                        if(chat.getMassages().size()==0 && chat.getName()==null){
+                        User user;
+                        if(chat.getUsers().get(0)==ChatHandle.user)
+                            user = chat.getUsers().get(1);
+                        else
+                            user = chat.getUsers().get(0);
+                        if(chat.getMassages().size()==0 && chat.getName()==null && !ChatHandle.userService.getUserForShowPosts(ChatHandle.user).contains(user)){
                             chats1.add(chat);
                         }
                         else{
@@ -158,13 +171,42 @@ public class SocialNetworkApplication extends Application{
         usersListView.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                if(usersListView.getItems().size()!=0){
-                    try {
-                        showChat(ChatList.get(usersListView.getItems().get(usersListView.getSelectionModel().getSelectedIndex())));
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                if(chatByFollower==false){
+                    if(usersListView.getItems().size()!=0){
+                        try {
+                            showChat(ChatList.get(usersListView.getItems().get(usersListView.getSelectionModel().getSelectedIndex())));
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    else{
+
                     }
                 }
+                else{
+                    if(usersListView.getItems().size()!=0){
+                        User user = userList.get(usersListView.getItems().get(usersListView.getSelectionModel().getSelectedIndex()));
+                        List<User> users = new ArrayList<>();
+                        users.add(ChatHandle.user);
+                        users.add(user);
+                        ChatHandle.chatService.addChat(users);
+                        try {
+                            cellChats.add(addChatToList(user.getChats().get(user.getChats().size()-1)));
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    chatByFollower=false;
+                }
+            }
+        });
+        userGroupListView.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                if(cellGroup.get(userGroupListView.getSelectionModel().getSelectedIndex()).avatarImage.isVisible())
+                    cellGroup.get(userGroupListView.getSelectionModel().getSelectedIndex()).avatarImage.setVisible(false);
+                else
+                    cellGroup.get(userGroupListView.getSelectionModel().getSelectedIndex()).avatarImage.setVisible(true);
             }
         });
 
@@ -181,7 +223,15 @@ public class SocialNetworkApplication extends Application{
     public void closeApp(MouseEvent mouseEvent) {
     }
 
-    public void slideMenuClicked(MouseEvent mouseEvent) {
+    public void slideMenuClicked(MouseEvent mouseEvent) throws IOException {
+        if(ChatHandle.user.getFollowers().size()!=0){
+            createGroup.setVisible(true);
+            for (User user : ChatHandle.user.getFollowers()) {
+                cellGroup.add(newGroup(user));
+            }
+        }
+
+
     }
 
     public void searchChatRoom(MouseEvent mouseEvent) {
@@ -244,6 +294,19 @@ public class SocialNetworkApplication extends Application{
 
     }
 
+    public CellChat newGroup(User user) throws IOException {
+        FXMLLoader loader = new FXMLLoader();
+        GridPane gridPane  =  loader.load(getClass().getResource("cell_chat.fxml").openStream());
+        CellChat controller = loader.getController();
+        controller.setText(user.getUsername());
+        controller.setTime("");
+        controller.setImage("okey");
+        controller.avatarImage.setVisible(false);
+        userGroupListView.getItems().add(gridPane);
+        userGroupList.put(gridPane,user);
+        return controller;
+    }
+
     public CellChat addChatToList(Chat chat) throws IOException {
         FXMLLoader loader = new FXMLLoader();
         GridPane gridPane  =  loader.load(getClass().getResource("cell_chat.fxml").openStream());
@@ -293,11 +356,11 @@ public class SocialNetworkApplication extends Application{
 
     }
 
-    public void addChat(){
+    public void addGroup(){
 
     }
 
-    public void chatByFollower(MouseEvent mouseEvent) {
+    public void chatByFollower(MouseEvent mouseEvent) throws IOException {
         List<User> users = ChatHandle.userService.getUserForShowPosts(ChatHandle.user);
         List<User> temp = new ArrayList<>();
         for (User user : users) {
@@ -310,6 +373,48 @@ public class SocialNetworkApplication extends Application{
         for (User user : temp) {
             users.remove(user);
         }
+        if(users.size()!=0){
+            chatByFollower = true;
+            cellChats.clear();
+            ChatList.clear();
+            usersListView.getItems().clear();
+            for (User user : users) {
+                FXMLLoader loader = new FXMLLoader();
+                GridPane gridPane  =  loader.load(getClass().getResource("cell_chat.fxml").openStream());
+                CellChat controller = loader.getController();
+                controller.setText(user.getUsername());
+                controller.setTime("");
+                usersListView.getItems().add(gridPane);
+                userList.put(gridPane,user);
+            }
+        }
+    }
 
+    public void createNewGroup(MouseEvent mouseEvent) {
+        if(nameGroup.getText().length()!=0){
+            Boolean test = false;
+            for (CellChat controller : cellGroup) {
+                if(controller.avatarImage.isVisible()){
+                    test = true;
+                    break;
+                }
+            }
+            if(test){
+                List<User> users = new ArrayList<>();
+                users.add(ChatHandle.user);
+                for (CellChat controller : cellGroup) {
+                    if(controller.avatarImage.isVisible()){
+                        users.add(userGroupList.get(controller.gridpane));
+                    }
+                }
+                ChatHandle.chatService.addChat(users);
+            }
+            else{
+                createGroup.setVisible(false);
+                cellGroup.clear();
+                userGroupList.clear();
+                userGroupListView.getItems().clear();
+            }
+        }
     }
 }

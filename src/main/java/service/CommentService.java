@@ -11,4 +11,8 @@ public interface CommentService extends BaseEntityService<Comment, Long> {
     void addComment(Post tweet , User user);
 
     void editComment(Comment comment);
+
+    void addComment(User user,Comment comment);
+
+    void showComment(Post post);
 }

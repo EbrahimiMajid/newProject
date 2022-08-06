@@ -3,6 +3,7 @@ package service.impl;
 import base.service.impl.BaseEntityServiceImpl;
 import entity.Post;
 import entity.User;
+import entity.UserProfile;
 import repository.PostRepository;
 import service.PostService;
 import utils.input.Input;
@@ -28,10 +29,14 @@ public class PostServiceImpl extends BaseEntityServiceImpl<Post, Long, PostRepos
                 "Enter your text :",
                 "Your text must be a maximum of 280 characters",
                 "", null).getInputTextString());
+
         post.setCreateDateTime(LocalDateTime.now());
         post.setLastUpdateDateTime(LocalDateTime.now());
         post.setUser(user);
         user.getPosts().add(post);
+        if(post.getUser().isBusiness())
+        {
+            post.setText("ad."+post.getText());}
         transaction.begin();
         repository.save(post);
         transaction.commit();

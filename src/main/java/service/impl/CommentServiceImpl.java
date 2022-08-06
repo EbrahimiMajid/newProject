@@ -2,6 +2,7 @@ package service.impl;
 
 import base.service.impl.BaseEntityServiceImpl;
 import entity.Comment;
+import entity.NestedComment;
 import entity.Post;
 import entity.User;
 import repository.CommentRepository;
@@ -33,7 +34,21 @@ public class CommentServiceImpl extends BaseEntityServiceImpl<Comment, Long , Co
         comment.setPost(post);
         comment.setUser(user);
         user.getComments().add(comment);
-
+        post.getComments().add(comment);
+        repository.getEntityManger().getTransaction().begin();
+        repository.save(comment);
+        repository.getEntityManger().getTransaction().commit();
+    }
+    @Override
+    public void addComment(User user,Comment comment)
+    {
+        NestedComment comment1= new NestedComment();
+        comment1.setTextComment(new Input("Enter your comment :").getInputString());
+        comment1.setCreateDateTime(LocalDateTime.now());
+        comment1.setLastUpdateDateTime(LocalDateTime.now());
+        comment1.setUser(user);
+        comment1.setComment(comment);
+        user.getNestedComments().add(comment1);
         repository.getEntityManger().getTransaction().begin();
         repository.save(comment);
         repository.getEntityManger().getTransaction().commit();
@@ -49,5 +64,10 @@ public class CommentServiceImpl extends BaseEntityServiceImpl<Comment, Long , Co
         repository.save(comment);
         repository.getEntityManger().getTransaction().commit();
 
+    }
+
+    @Override
+    public void showComment(Post post) {
+        repository.showComments(post);
     }
 }

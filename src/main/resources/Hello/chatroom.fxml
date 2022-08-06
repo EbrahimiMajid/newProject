@@ -62,7 +62,7 @@
                 </Label>
             </children>
         </GridPane>
-        <SplitPane fx:id="divider" dividerPositions="0.3" prefHeight="720.0" prefWidth="1280.0" style="-fx-background-color: #17212B;" GridPane.rowIndex="1">
+        <SplitPane fx:id="divider" dividerPositions="0.48328877005347587" prefHeight="720.0" prefWidth="1280.0" style="-fx-background-color: #17212B;" GridPane.rowIndex="1">
             <GridPane fx:id="left" style="-fx-background-color: #17212B;">
                 <columnConstraints>
                     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="100.0" />
@@ -82,7 +82,7 @@
                                     <Image url="@../resources/img/Liste.png" />
                                 </image>
                             </ImageView>
-                            <ImageView fitHeight="23.0" fitWidth="31.0" onMouseClicked="#chatByFollower" pickOnBounds="true" preserveRatio="true" >
+                            <ImageView fitHeight="23.0" fitWidth="31.0" onMouseClicked="#chatByFollower" pickOnBounds="true" preserveRatio="true">
                                 <image>
                                     <Image url="@../resources/img/plus-60.png" />
                                 </image>
@@ -94,11 +94,44 @@
                         </padding>
                     </HBox>
                     <ListView fx:id="usersListView" style="-fx-background-color: #17212B;" GridPane.rowIndex="1">
-                        <stylesheets>
-                            <URL value="@../resources/css/usersListViewCss.css" />
-                            <URL value="@../resources/css/cellViewCss.css" />
-                        </stylesheets>
+                            <stylesheets>
+                                <URL value="@../resources/css/usersListViewCss.css"/>
+                                <URL value="@../resources/css/cellViewCss.css"/>
+                            </stylesheets>
                     </ListView>
+               <GridPane fx:id="createGroup" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="523.0" prefWidth="390.0" style="-fx-background-color: #172d3b" GridPane.rowIndex="1">
+                 <columnConstraints>
+                   <ColumnConstraints hgrow="ALWAYS" minWidth="0.8" prefWidth="426.8" />
+                 </columnConstraints>
+                 <rowConstraints>
+                   <RowConstraints maxHeight="101.59999504089356" minHeight="10.0" prefHeight="91.99998893737794" vgrow="ALWAYS" />
+                     <RowConstraints maxHeight="508.00000915527346" minHeight="10.0" prefHeight="432.0000110626221" vgrow="ALWAYS" />
+                 </rowConstraints>
+                  <children>
+                     <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" style="-fx-background-color: #14353a;" spacing="60">
+                        <children>
+                            <TextField fx:id="nameGroup" maxWidth="200" prefWidth="160" promptText="Type name group" style="-fx-background-color: #1d454d;" stylesheets="@../resources/css/textField.css" HBox.hgrow="SOMETIMES">
+
+                            </TextField>
+                            <ImageView fx:id="okey" fitHeight="33.0" onMouseClicked="#createNewGroup" fitWidth="33.0" pickOnBounds="true" preserveRatio="true" >
+                                <image>
+                                    <Image url="@../resources/img/okey.png"/>
+                                </image>
+                            </ImageView>
+                        </children>
+                         <padding>
+                             <Insets left="30.0" />
+                         </padding>
+                     </HBox>
+                      <ListView fx:id="userGroupListView" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #172d3b;" GridPane.rowIndex="1">
+
+                          <stylesheets>
+                              <URL value="@../resources/css/usersListViewCss.css" />
+                              <URL value="@../resources/css/cellViewCss.css" />
+                          </stylesheets>
+                      </ListView>
+                  </children>
+               </GridPane>
                 </children>
             </GridPane>
 

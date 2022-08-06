@@ -19,7 +19,7 @@ public class ProfileMenu extends Menu{
     public ProfileMenu(User user) {
         super(new String[]{"Edit Profile","Delete Account","Post","Comment",
                 "like","Show Post Of All Users","Explore","Chat",
-                "Show Followers","Show Followings","User suggestion","Log out"});
+                "Show Followers","Show Followings","User suggestion","Advertisement offer","Log out"});
         this.user = user;
         System.out.println("Welcome to your work bench... \n"
                 +user.getUserProfile().getFirstName() +"  "
@@ -66,6 +66,8 @@ public class ProfileMenu extends Menu{
                     userSuggestion(user);
                     break;
                 case 12:
+                    AdvertisementOffer(user,user.getAdvertise());
+                case 13:
                     return;
             }
         }
@@ -73,46 +75,56 @@ public class ProfileMenu extends Menu{
 
     public void AdvertisementOffer(User user,Post post){
         List<Post> posts = postService.businessPosts();
-        List<Post> removes = new ArrayList<>();
-        for (int i = 0; i < posts.size(); i++) {
-            if(posts.get(i).getLikes().contains(user))
-                removes.add(posts.get(i));
-        }
-        for (int i = 0; i < removes.size(); i++) {
-            posts.remove(removes.get(i));
-        }
         if(posts.size()==0){
             System.out.println("no result.");
+            return;
         }
-        else{
-            ArrayList<Integer> numbers = new ArrayList<>();
-            List<User> likeUsers = post.getLikes();
-            List<User> disLikes = post.getDisLikes();
-            List<User> onReaction = post.getNoReaction();
-            int number;
+        Post star = posts.get(0);
+        if(post != null){
+            List<Post> removes = new ArrayList<>();
             for (int i = 0; i < posts.size(); i++) {
-                number = 0;
-
-                for (User likeUser : likeUsers) {
-                    if(posts.get(i).getLikes().contains(likeUser))
-                        number++;
-                }
-
-                for (User disLike : disLikes) {
-                    if(posts.get(i).getDisLikes().contains(disLike))
-                        number++;
-                }
-
-                for (User user1 : onReaction) {
-                    if(posts.get(i).getNoReaction().contains(user1))
-                        number++;
-                }
-
-                numbers.add(number);
+                if(posts.get(i).getLikes().contains(user))
+                    removes.add(posts.get(i));
             }
-            int n = numbers.indexOf(Collections.max(numbers));
+            for (int i = 0; i < removes.size(); i++) {
+                posts.remove(removes.get(i));
+            }
+            if(posts.size()==0){
+                System.out.println("no result.");
+                return;
+            }
+            else{
+                ArrayList<Integer> numbers = new ArrayList<>();
+                List<User> likeUsers = post.getLikes();
+                List<User> disLikes = post.getDisLikes();
+                List<User> onReaction = post.getNoReaction();
+                int number;
+                for (int i = 0; i < posts.size(); i++) {
+                    number = 0;
 
-            Post star = posts.get(n);
+                    for (User likeUser : likeUsers) {
+                        if(posts.get(i).getLikes().contains(likeUser))
+                            number++;
+                    }
+
+                    for (User disLike : disLikes) {
+                        if(posts.get(i).getDisLikes().contains(disLike))
+                            number++;
+                    }
+
+                    for (User user1 : onReaction) {
+                        if(posts.get(i).getNoReaction().contains(user1))
+                            number++;
+                    }
+
+                    numbers.add(number);
+                }
+                int n = numbers.indexOf(Collections.max(numbers));
+                star = posts.get(n);
+        }}
+
+
+            user.setAdvertise(star);
 
             System.out.println(star.getUser().getUserProfile().getFirstName()
                     +"  "+star.getUser().getUserProfile().getLastName()+":");
@@ -132,7 +144,7 @@ public class ProfileMenu extends Menu{
                 postService.saveLikeAndDislikeInBusinessPost(star,user,null);
             }
 
-        }
+
     }
 
     public void userSuggestion(User user){

@@ -8,6 +8,7 @@ module Hello {
     requires java.xml.bind;
 
     requires org.hibernate.orm.core;
+    requires net.bytebuddy;
 
     opens base;
     opens entity;
